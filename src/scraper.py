@@ -1,16 +1,23 @@
 """
-验证是否能正常req http
+将http保存到本地，方便初期反复调试，避免频繁刷新或req http触发反爬或强制登录等
 """
-import requests
+from selenium import webdriver
+import time
 
-url = "https://search.jd.com/Search?keyword=耳机"
-headers = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
-    # User-Agent这个字段是告诉服务器：“我是一个什么样的客户端”
-    # 默认情况下，Python requests 的 User-Agent 看起来不像“人类浏览器”，有的网站会拒绝返回内容
-    # 举个例子，很多网站为了防爬虫，只有伪装成浏览器访问它，它才会返回正常内容
-    # 这里就是告诉网站：“嘿，我是一个正常的浏览器，比如 Chrome。”
-}
+# 打开浏览器
+options = webdriver.ChromeOptions()
+options.add_argument('--headless')  # 不显示浏览器界面，可选
+driver = webdriver.Chrome(options=options)
 
-response = requests.get(url, headers=headers)
-print(response.text[:1000])# 打印前1000个字符看看内容
+# 打开当当搜索页面（以“人工智能”为例）
+driver.get("https://search.dangdang.com/?key=人工智能&act=input")
+
+# 等待页面加载（时间可视网速调整）
+time.sleep(5)
+
+# 保存当前渲染后的页面源码
+with open("dangdang_ai.html", "w", encoding="utf-8") as f:
+    f.write(driver.page_source)
+
+driver.quit()
+print("已保存完整渲染后的 HTML 文件")
