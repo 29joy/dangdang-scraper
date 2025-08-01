@@ -8,7 +8,8 @@ with open("dangdang_ai.html", "r", encoding="utf-8") as f:
 soup = BeautifulSoup(html, "lxml")
 
 # 找到所有图书信息模块
-book_items = soup.find_all("li", class_="line1")
+# book_items = soup.find_all("li", class_="line1")    # class_="line1"只对应第一本书这样写只能提取到第一本书
+book_items = soup.select("ul.bigimg > li")    # 提取所有图书
 
 print("共找到图书数量：", len(book_items))
 
