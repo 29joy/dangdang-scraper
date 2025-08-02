@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-import pandas as pd
+import openpyxl
 
 # 读取保存好的 HTML 文件
 with open("dangdang_ai.html", "r", encoding="utf-8") as f:
@@ -9,11 +9,12 @@ with open("dangdang_ai.html", "r", encoding="utf-8") as f:
 soup = BeautifulSoup(html, "lxml")
 
 # 找到所有图书信息模块
-# book_items = soup.find_all("li", class_="line1")
 book_items = soup.select("ul.bigimg > li")    # 提取所有图书
 
-# 用于保存所有图书信息的列表
-books = []
+# 创建Excel表格
+wb = openpyxl.Workbook()
+ws = wb.active
+ws.append(['标题', '作者', '价格', '链接'])
 
 for item in book_items:
     title = item.find("a", title=True).get("title").strip() if item.find("a", title=True) else "无标题"
@@ -23,15 +24,8 @@ for item in book_items:
     price_tag = item.find("span", class_="search_now_price")
     price = price_tag.text.strip() if price_tag else "无价格"
 
-    books.append({
-        "标题": title,
-        "作者": author,
-        "价格": price,
-        "链接": link
-    })
+    ws.append([title, price, author, link])
 
-# 保存为 Excel 表格
-df = pd.DataFrame(books)
-df.to_excel("dangdang_books.xlsx", index=False, engine='openpyxl')
-
+# 保存到Excel 表格
+wb.save('dangdang_books_with_image.xlsx')
 print("✅ 已成功保存为 dangdang_books.xlsx")
