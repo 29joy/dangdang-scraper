@@ -14,7 +14,7 @@ book_items = soup.select("ul.bigimg > li")    # 提取所有图书
 # 创建Excel表格
 wb = openpyxl.Workbook()
 ws = wb.active
-ws.append(['标题', '作者', '价格', '链接'])
+ws.append(['标题', '作者', '价格', '链接', '封面图'])
 
 for item in book_items:
     title = item.find("a", title=True).get("title").strip() if item.find("a", title=True) else "无标题"
@@ -23,9 +23,11 @@ for item in book_items:
     author = author_tag.text.strip().split("\xa0\xa0")[0] if author_tag else "无作者"
     price_tag = item.find("span", class_="search_now_price")
     price = price_tag.text.strip() if price_tag else "无价格"
+    img_tag = item.find('img')
+    img_url = img_tag.get('data-original') or img_tag.get('src') if img_tag else ''
 
-    ws.append([title, price, author, link])
+    ws.append([title, price, author, link, img_url])
 
 # 保存到Excel 表格
-wb.save('dangdang_books_with_image.xlsx')
+wb.save('dangdang_books.xlsx')
 print("✅ 已成功保存为 dangdang_books.xlsx")
