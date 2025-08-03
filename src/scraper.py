@@ -4,6 +4,28 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 import time
 import pandas as pd
+import os
+import requests
+
+def download_image(img_url, save_path):
+    try:
+        if img_url.startswith("//"):
+            img_url = "http:" + img_url
+        elif img_url.startswith("/"):
+            img_url = "https://www.dangdang.com" + img_url
+
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+        }
+
+        response = requests.get(img_url, headers=headers, timeout=10)
+        if response.status_code == 200:
+            with open(save_path, "wb") as f:
+                f.write(response.content)
+        else:
+            print(f"Failed to download image: {img_url} ({response.status_code})")
+    except Exception as e:
+        print(f"Error downloading {img_url}: {e}")
 
 # 初始化浏览器
 options = Options()
@@ -26,6 +48,9 @@ time.sleep(3)    # 等待页面加载完毕
 all_pages_data = []  # 每一页是一个列表
 total_pages = 3
 
+# 图片保存文件夹
+os.makedirs('./output/images', exist_ok=True)
+
 for page in range(1, total_pages + 1):
     print(f"正在抓取第 {page} 页...")
 
@@ -39,11 +64,25 @@ for page in range(1, total_pages + 1):
             title = book.find_element(By.XPATH, './/a[@name="itemlist-title"]').text.strip()
             price = book.find_element(By.CLASS_NAME, 'search_now_price').text.strip()
             author = book.find_element(By.XPATH, './/p[@class="search_book_author"]/span[1]').text.strip()
+            img_url = book.find_element(By.TAG_NAME, 'img').get_attribute('data-original')
+
+            if img_url:
+                # img_name = title[:10] + '.jpg'  # 这样命名可能重复
+                # img_path = os.path.join('images', img_name)
+
+                img_filename = f'page{page}_book{idx}_{title[:10]}.jpg'  # 加入页码和书序号
+                img_path = os.path.join(r'output\images', img_filename)
+
+                # 下载封面图
+                download_image(img_url, img_path)
+            else:
+                img_path = "无图片"
 
             page_data.append({
                 "标题": title,
                 "价格": price,
-                "作者": author
+                "作者": author,
+                "封面图路径": img_path
             })
 
         except Exception as e:
@@ -72,47 +111,3 @@ with pd.ExcelWriter('dangdang_books.xlsx') as writer:
         df.to_excel(writer, sheet_name=f"第{i}页", index=False)
 
 print("抓取与保存完成。")
-
-# ------------------------不分页存储如想要一个包含所有的sheet----------------------------
-# # 创建数据存储容器
-# all_pages_data = []  # 每一页是一个列表
-# total_pages = 3
-#
-# for page in range(1, total_pages + 1):
-#     print(f"正在抓取第 {page} 页...")
-#
-#     time.sleep(3)  # 等待页面加载
-#     books = driver.find_elements(By.XPATH, '//ul[@class="bigimg"]/li')
-#
-#     for book in books:
-#         try:
-#             title = book.find_element(By.XPATH, './/a[@name="itemlist-title"]').text.strip()
-#             price = book.find_element(By.CLASS_NAME, 'search_now_price').text.strip()
-#             author = book.find_element(By.XPATH, './/p[@class="search_book_author"]/span[1]').text.strip()
-#         except Exception as e:
-#             print(f"错误：{e}")
-#             continue
-#
-#         all_pages_data.append({
-#             "标题": title,
-#             "价格": price,
-#             "作者": author
-#         })
-#
-#     # 翻页
-#     if page < total_pages:
-#         try:
-#             next_button = driver.find_element(By.LINK_TEXT, '下一页')
-#             driver.execute_script("arguments[0].click();", next_button)
-#         except:
-#             print("找不到‘下一页’，提前结束")
-#             break
-#
-# # 关闭浏览器
-# driver.quit()
-#
-# # 保存为 Excel
-# df = pd.DataFrame(all_pages_data)
-# df.to_excel('dangdang_books.xlsx', index=False)
-#
-# print("抓取与保存完成。")
