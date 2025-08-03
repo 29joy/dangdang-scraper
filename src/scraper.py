@@ -1,15 +1,25 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.options import Options
 import time
 import openpyxl
 
-options = webdriver.ChromeOptions()
-options.add_argument('--headless')  # 无头模式
+# 初始化浏览器
+options = Options()
+options.add_argument('--start-maximized')
 driver = webdriver.Chrome(options=options)
 
-# 访问搜索结果页
-driver.get("https://search.dangdang.com/?key=人工智能&act=input")
-time.sleep(5)    # 等待页面加载完毕
+# 搜索关键词
+keyword = 'AI'
+driver.get('https://www.dangdang.com/')
+time.sleep(2)    # 等待页面加载完毕
+
+# 输入搜索内容并回车
+search_input = driver.find_element(By.ID, 'key_S')    # 定位搜索框
+search_input.send_keys(keyword)    # 输出关键词
+search_input.send_keys(Keys.ENTER)    # 点击回车进行搜索
+time.sleep(3)    # 等待页面加载完毕
 
 # 抓取所有商品信息
 books = driver.find_elements(By.XPATH, '//ul[@class="bigimg"]/li')
