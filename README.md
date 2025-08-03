@@ -21,8 +21,8 @@ dangdang-scraper/
 ├── src/
 │ ├── scraper.py
 │ ├── utils.py
-├── images/
 ├── output/
+│ ├── images/
 ├── README.md
 ├── requirements.txt
 
