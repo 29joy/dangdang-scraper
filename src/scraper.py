@@ -64,15 +64,14 @@ for page in range(1, total_pages + 1):
             title = book.find_element(By.XPATH, './/a[@name="itemlist-title"]').text.strip()
             price = book.find_element(By.CLASS_NAME, 'search_now_price').text.strip()
             author = book.find_element(By.XPATH, './/p[@class="search_book_author"]/span[1]').text.strip()
-            img_url = book.find_element(By.TAG_NAME, 'img').get_attribute('data-original')
+            img_el = book.find_element(By.TAG_NAME, 'img')
+            img_url = img_el.get_attribute('data-original') or img_el.get_attribute('src')
 
             if img_url:
                 # img_name = title[:10] + '.jpg'  # 这样命名可能重复
                 # img_path = os.path.join('images', img_name)
-
                 img_filename = f'page{page}_book{idx}_{title[:10]}.jpg'  # 加入页码和书序号
                 img_path = os.path.join(r'output\images', img_filename)
-
                 # 下载封面图
                 download_image(img_url, img_path)
             else:
@@ -84,7 +83,6 @@ for page in range(1, total_pages + 1):
                 "作者": author,
                 "封面图路径": img_path
             })
-
         except Exception as e:
             print(f"错误：{e}")
             continue
