@@ -68,9 +68,7 @@ for page in range(1, total_pages + 1):
             img_url = img_el.get_attribute('data-original') or img_el.get_attribute('src')
 
             if img_url:
-                # img_name = title[:10] + '.jpg'  # 这样命名可能重复
-                # img_path = os.path.join('images', img_name)
-                img_filename = f'page{page}_book{idx}_{title[:10]}.jpg'  # 加入页码和书序号
+                img_filename = f"page{page}_book{idx}.jpg"
                 img_path = os.path.join(r'output\images', img_filename)
                 # 下载封面图
                 download_image(img_url, img_path)
@@ -81,6 +79,7 @@ for page in range(1, total_pages + 1):
                 "标题": title,
                 "价格": price,
                 "作者": author,
+                "封面图文件名": os.path.basename(img_path),
                 "封面图路径": img_path
             })
         except Exception as e:
