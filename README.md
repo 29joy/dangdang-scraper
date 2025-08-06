@@ -36,7 +36,12 @@ This project helps me master:
 
 ## 🧾 Versioning
 This project follows Semantic Versioning:
+
 MAJOR.MINOR.PATCH (e.g., v1.2.0)
+
 MAJOR version: Increased when incompatible API or structural changes are introduced.
+
 MINOR version: Increased when functionality is added in a backward-compatible manner.
+
 PATCH version: Increased for backward-compatible bug fixes or improvements.
+
