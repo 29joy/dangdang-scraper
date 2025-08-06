@@ -1,22 +1,18 @@
 # Dangdang Book Scraper 📚
-
 This is a practical web scraping project that collects book data from Dangdang.com based on search keywords.
 
 ## 🔍 Features
-
 - Automates keyword search and multi-page crawling
 - Saves book info (title, price, publisher, etc.) to Excel
 - Downloads book cover images with unique filenames
 - Handles missing images or download failures gracefully
 
 ## 🛠 Tech Stack
-
 - Python
 - Selenium
 - openpyxl (for Excel export)
 
 ## 📂 Project Structure
-
 dangdang-scraper/
 ├── src/
 │ ├── scraper.py
@@ -27,16 +23,25 @@ dangdang-scraper/
 ├── requirements.txt
 
 ## 🚀 How to Run
-
 1. Install requirements:
    pip install -r requirements.txt
 2. Run the scraper:
    python src/scraper.py
 
 ## 🧠 Learning Purpose
-
 This project helps me master:
-
 - Web automation with Selenium
 - Excel and image handling in Python
 - Exception handling and modular design
+
+## 🧾 Versioning
+This project follows Semantic Versioning:
+
+MAJOR.MINOR.PATCH (e.g., v1.2.0)
+
+MAJOR version: Increased when incompatible API or structural changes are introduced.
+
+MINOR version: Increased when functionality is added in a backward-compatible manner.
+
+PATCH version: Increased for backward-compatible bug fixes or improvements.
+
