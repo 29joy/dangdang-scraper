@@ -1,29 +1,31 @@
-"""
-解决如下图片下载过程中的超时失败问题: Error downloading http://img3m0.ddimg.cn/41/18/29919920-1_b_0.jpg: HTTPConnectionPool(host='staticobs.ddimg.cn', port=80): Read timed out.
-想法：
-1、增加重试机制，第一次下载时就自动重试3次->这个功能被包装在download_image这个函数内的
-2、如果第一次下载失败，就记录下来，等主流程跑完再试一下所有失败的图片
-增加下载状态变量，对失败的图片加入失败list，等待第二次下载
-第二次下载要下载对应的图片，对于成功的图片要归入正确的文件夹、并且在成功列表中替换下载状态和保存路径
-3、如果第二次下载仍失败，就在原表格中标注出来并且单独列一个失败的列表来加以说明
-第二次仍然失败的图片不需要在成功列表有所改动，只需要将下载失败的图片信息加入一个最终的失败list
-最后这个list会在Excel中保存在一个单独的失败sheet
-4、过程中发现有些图片本身是占位图或无图片一直导致超时下载，将占位图或无图片的判断同时加入了代码中
+# ===== 标准库模块 =====
+from pathlib import Path
+import os
+import time
 
-此版本最终完善了整体的img下载流程
-目前还没加各种reason
-加上之后后续的下载和主流程代码要随之更改
-"""
+# ===== 第三方库 =====
+import pandas as pd
+import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
-import time
-import pandas as pd
-import os
-import requests
-from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
+
+# ===== 项目自定义模块 =====
+# from mymodule import myfunction
+
+# 当前文件的路径（src/scraper.py）
+current_file = Path(__file__).resolve()
+# 项目根目录（即 src 的上一级）
+project_root = current_file.parent.parent
+# 输出文件夹：output（在项目根目录下）
+output_dir = project_root / 'output'
+images_dir = output_dir / 'images'
+excel_path = output_dir / 'dangdang_books.xlsx'
+# 创建 output 和 images 文件夹
+images_dir.mkdir(parents=True, exist_ok=True)
 
 min_image_file_size = 2048
 
@@ -161,10 +163,10 @@ for page in range(1, total_pages + 1):
 
             is_valid, new_img_url = is_valid_image(img_url)
             img_filename = f"page{page}_book{idx}.jpg"
-            img_path = os.path.join(r'output\images', img_filename)    # 验证无图片的情况，可能改回去
+            img_path = images_dir / img_filename    # 验证无图片的情况，可能改回去
             if is_valid:
                 # img_filename = f"page{page}_book{idx}.jpg"
-                # img_path = os.path.join(r'output\images', img_filename)
+                # img_path = images_dir / img_filename
                 success = download_image(new_img_url, img_path)
                 if success:
                     img_status = os.path.basename(img_path)
@@ -236,7 +238,7 @@ if len(first_fail_list):
 driver.quit()
 
 # 分页存入 Excel
-with pd.ExcelWriter('dangdang_books.xlsx') as writer:
+with pd.ExcelWriter(excel_path) as writer:
     for i, page_data in enumerate(all_pages_data, start=1):
         df = pd.DataFrame(page_data)
         df.to_excel(writer, sheet_name=f"第{i}页", index=False)
