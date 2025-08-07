@@ -1,5 +1,6 @@
 # ===== 标准库模块 =====
 import os
+import re
 import time
 from pathlib import Path
 
@@ -28,6 +29,7 @@ excel_path = output_dir / "dangdang_books.xlsx"
 images_dir.mkdir(parents=True, exist_ok=True)
 
 min_image_file_size = 2048
+title_max_length = 15
 
 
 # is_valid_image 判断img是否有效
@@ -120,6 +122,14 @@ def download_image(img_url, save_path, max_retries=3):
         return False
 
 
+# sanitize_filename 标题清洗
+def sanitize_filename(title: str, max_length: int) -> str:
+    # 移除非法字符，保留常用汉字、字母、数字、空格、连字符和下划线
+    title = re.sub(r'[\\/*?:"<>|]', "", title)
+    title = re.sub(r"\s+", "_", title)  # 将空格换成下划线
+    return title.strip()[:max_length]
+
+
 # 初始化浏览器
 options = Options()
 options.add_argument("--start-maximized")
@@ -169,11 +179,11 @@ for page in range(1, total_pages + 1):
             )
 
             is_valid, new_img_url = is_valid_image(img_url)
-            img_filename = f"page{page}_book{idx}.jpg"
-            img_path = images_dir / img_filename  # 验证无图片的情况，可能改回去
+
+            safe_title = sanitize_filename(title, title_max_length)
+            img_filename = f"{safe_title}_page{page}_{idx}.jpg"
+            img_path = images_dir / img_filename
             if is_valid:
-                # img_filename = f"page{page}_book{idx}.jpg"
-                # img_path = images_dir / img_filename
                 success = download_image(new_img_url, img_path)
                 if success:
                     img_status = os.path.basename(img_path)
