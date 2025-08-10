@@ -38,6 +38,7 @@ No need to manually install or configure ChromeDriver. The project handles brows
 
 ## 📁 文件结构说明 File Structure
 
+```
 dangdang-scraper/
 ├── src/ # 主程序文件
 │ ├── scraper.py # 爬虫主逻辑
@@ -55,6 +56,7 @@ dangdang-scraper/
 ├── requirements.txt # Python 依赖
 ├── README.md # 项目说明
 ├── CHANGELOG.md # 更新日志
+```
 
 > ⚠️ 注意：Git 默认不会追踪空文件夹，`output/images/` 中添加了 `.gitkeep` 文件以保留文件夹结构。
 > Note: Git doesn't track empty folders. We include a `.gitkeep` file under `output/images/` to preserve the folder structure.
