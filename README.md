@@ -44,6 +44,14 @@ dangdang-scraper/
 │ ├── utils.py # 辅助工具函数
 ├── output/ # 输出结果
 │ └── images/ # 封面图像保存位置（含 .gitkeep 占位）
+├── docs/ # 项目文档
+│ ├── pseudocode/ # 伪代码文件夹
+│ ├── flowcharts/ # 流程图文件夹
+│ ├── mindmaps/ # 思维导图文件夹
+│ └── README_docs.md # docs 目录说明
+├── dev_logs/ # 开发日志，按日期记录开发过程和心得
+│ └── README_dev_logs.md # 开发日志说明文档
+├── tests/ # 测试代码目录（暂空，准备存放单元和集成测试）
 ├── requirements.txt # Python 依赖
 ├── README.md # 项目说明
 ├── CHANGELOG.md # 更新日志

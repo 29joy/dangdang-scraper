@@ -1,0 +1,136 @@
+====== 图片是否有效判断伪代码 ======
+====== utils func ======
+def is_valid_image():
+pass
+def download_image():
+pass
+
+====== 变量定义与声明 ======
+first_download_fail_list = []
+
+====== 变量定义与声明 ======
+is_valid_image()
+    if img url is valid
+        download_image()
+            if success
+                return success
+            else
+                first_download_fail_list.append()
+                return failure
+    else
+        truly not valid
+            record img url not valid
+        not valid reason in ["Network Response Failed", "Incomplete Image"])
+            for num_of_retry in range(1, total_num_of_retry + 1):
+                is_valid_image()
+                    if img url is valid
+                        download_image()
+                            if success
+                                pass(can delete this branch only add if not success)
+                            else
+                                first_download_fail_list.append()
+                        break
+                    else
+                        truly not valid
+                            record img url not valid
+                            break
+                        not valid reason in ["Network Response Failed", "Incomplete Image"])
+                            if num_of_retry == total_num_of_retry:
+                                record reason
+
+ChatGPT给的版本
+====== 工具函数 ======
+def is_valid_image(img_url):
+    # 判断图片URL是否有效
+    pass
+
+def download_image(img_url):
+    # 下载图片，返回是否成功
+    pass
+
+====== 主流程 ======
+first_download_fail_list = []
+
+function process_image(img_url, total_num_of_retry):
+    if is_valid_image(img_url):
+        if download_image(img_url):
+            return "success"
+        else:
+            first_download_fail_list.append(img_url)
+            return "failure"
+    else:
+        if truly_not_valid(img_url):
+            record_img_url_not_valid(img_url)
+            return "failure"
+        elif reason_in(["Network Response Failed", "Incomplete Image"]):
+            for num_of_retry in range(1, total_num_of_retry + 1):
+                if is_valid_image(img_url):
+                    if download_image(img_url):
+                        return "success"
+                    else:
+                        first_download_fail_list.append(img_url)
+                    break
+                else:
+                    if truly_not_valid(img_url):
+                        record_img_url_not_valid(img_url)
+                        break
+                    elif reason_in(["Network Response Failed", "Incomplete Image"]):
+                        if num_of_retry == total_num_of_retry:
+                            record_reason(img_url)
+            return "failure"
+主要优化点：
+函数定义和调用写得更明确，比如process_image带参数img_url和重试次数total_num_of_retry，方便理解。
+return语句明确，避免遗漏流程结束点。
+将判断流程用if-elif-else结构清晰划分。
+明确了伪代码中“记录”、“加入列表”等动作的函数名，方便后续实现。
+保持缩进统一，结构清晰。
+
+我自己的版本和ChatGPT给的版本比起来，三处需要改进
+    1是加入参数
+    2是各处都加入return
+        我自己因为知道这个重试循环外还有翻页的大循环所以各处的return加的不太够
+    3有些需要缩进的地方没有注意
+    不过它写的也有不全的地方，比如 total_num_of_retry 也忘了定义哈哈哈哈
+    最终决定这个函数不需要有return，所以暂时就不写return了
+        之后和整体流程一起封装时，如果有需要随时更新流程图、伪代码和相关的文件
+修正版本
+====== utils func ======
+def is_valid_image(img_url):
+    # 判断img url是否有效
+    pass
+def download_image(img_url):
+    # 图片下载
+    pass
+
+====== 变量定义与声明 ======
+first_download_fail_list = []
+total_num_of_retry = 3
+
+====== 主流程 ======
+func process_image(img_url, total_num_of_retry):
+    is_valid_image(img_url)
+        if img url is valid:
+            download_image()
+                if success
+                else
+                    first_download_fail_list.append()
+        else
+            truly not valid
+                record img url not valid
+            not valid reason in ["Network Response Failed", "Incomplete Image"])
+                for num_of_retry in range(1, total_num_of_retry + 1):
+                    is_valid_image()
+                        if img url is valid
+                            download_image()
+                                if success
+                                else
+                                    first_download_fail_list.append()
+                            break
+                        else
+                            truly not valid
+                                record img url not valid
+                                break
+                            not valid reason in ["Network Response Failed", "Incomplete Image"])
+                                record not valid logs -> add debug plan
+                                if num_of_retry == total_num_of_retry:
+                                    record reason
