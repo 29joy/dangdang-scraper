@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="portfolio-assets/blob/main/dangddang.png" alt="Dangdang Book Scraper Banner" width="100%">
+</p>
+
 # 当当图书爬虫 · Book Scraper for dangdang.com
 
 🚀 一个基于 Selenium 自动化的图书信息提取工具，当前版本可抓取特定关键词（如 “AI”）的搜索结果图书数据，并保存为 Excel 文件，封面图下载至本地。  
