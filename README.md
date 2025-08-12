@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="portfolio-assets/blob/main/dangddang.png" alt="Dangdang Book Scraper Banner" width="100%">
+  <img src="portfolio-assets/dangddang.png" alt="Dangdang Book Scraper Banner" width="100%">
 </p>
 
 # 当当图书爬虫 · Book Scraper for dangdang.com
