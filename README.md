@@ -3,6 +3,11 @@
 🚀 一个基于 Selenium 自动化的图书信息提取工具，当前版本可抓取特定关键词（如 “AI”）的搜索结果图书数据，并保存为 Excel 文件，封面图下载至本地。  
 A simple yet effective book information scraper for [dangdang.com](https://www.dangdang.com/) using Selenium. It extracts book data from search results and saves them into Excel with cover images.
 
+![Python](https://img.shields.io/badge/Python-3.10-blue)
+![Selenium](https://img.shields.io/badge/Selenium-Automation-green)
+![Excel](https://img.shields.io/badge/Excel-Data%20Export-yellow)
+![Web Scraping](https://img.shields.io/badge/Web-Scraping-orange)
+
 ## 📌 功能 Features
 
 - 自动爬取指定关键词的图书信息（当前关键词为 “AI”）
