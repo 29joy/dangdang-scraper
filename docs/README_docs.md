@@ -1,44 +1,41 @@
-# 项目文档总览 (Documentation Overview)
+# Documentation Directory Guide / 文档目录说明
 
-本目录 `docs/` 主要用于存放项目相关的设计文档、辅助材料和开发笔记，方便集中管理和查阅。
+This folder (`docs/`) contains all the documentation files related to the project.  
+该目录 (`docs/`) 存放与本项目相关的所有文档文件。
+It is organized into several subfolders to clearly separate different types of documents.
+通过多个子文件夹进行组织，以便清晰区分不同类型的文档。
 
-## 目录结构
+## Folder Structure / 文件夹结构
 
-docs/
-├── pseudocode/ # 伪代码文件，描述算法和逻辑设计
-├── flowcharts/ # 流程图文件，展示程序流程与架构
-├── mindmaps/ # 思维导图文件，梳理思路与知识结构
-└── README_docs.md # 本文档，说明 docs 目录结构与内容
+### module_relationship_diagram/
 
-## 目录说明
-
-### pseudocode/
-
-存放项目中编写的伪代码文件，用于在编码前规划核心算法与流程。  
-建议使用 Markdown (`.md`) 或纯文本 (`.txt`) 格式，方便阅读和版本管理。
+Contains module relationship diagrams.  
+存放模块关系图。
+Shows the dependencies and interactions between different modules in the project.
+用于展示项目中不同模块之间的依赖关系和交互方式。
 
 ### flowcharts/
 
-包含所有项目相关的流程图。  
-流程图格式可以是图片文件（PNG、SVG）或流程图编辑工具的原生格式（如 draw.io 的 `.drawio` 文件），方便修改和导出。
+Contains flowcharts that illustrate the workflow, data processing, and logic structure of the project.  
+存放项目的流程图。
+Helps visualize execution steps and improve understanding.
+用于展示执行步骤、数据处理过程和逻辑结构，帮助理解代码运行。
 
 ### mindmaps/
 
-存放项目的思维导图，帮助梳理项目思路、功能模块和技术方案。  
-支持各种导图文件格式（如 `.xmind`、`.mm`）及导出图片格式。
+Contains mind maps for brainstorming, requirement breakdown, and conceptual design.  
+存放思维导图。
+Useful for organizing thoughts and exploring relationships between ideas.
+用于头脑风暴、需求拆解和概念设计，便于整理想法和探索关系。
 
-## 使用建议
+### pseudocode/
 
-- 在开发新功能或设计模块时，优先在伪代码文件夹中规划核心逻辑。
-- 通过流程图直观展现代码流程，便于团队协作和代码审查。
-- 利用思维导图整体把控项目结构与重点，支持持续优化。
+Contains pseudocode for the main modules of the project.
+存放项目主要模块的伪代码。
+Used to describe the core logic and workflow in a language-independent way.
+用于以与语言无关的方式描述核心逻辑与工作流程。
 
-## 其他资源
+### README_docs.md
 
-- 开发日志请参考项目根目录下的 `dev_logs/` 文件夹，记录每日或阶段性的开发过程和心得体会。
-- 详细的项目介绍和使用说明请查看项目根目录下的 `README.md`。
-- 版本更新记录请参见根目录的 `CHANGELOG.md`。
-
----
-
-如有任何建议或疑问，欢迎提交 issue 或直接联系开发者。
+This file (the one you are reading) explains the purpose of each subfolder in the `docs/` directory.
+当前文件，说明 `docs/` 目录中每个子文件夹的用途。

@@ -3,3 +3,5 @@ output/*
 !output/images/
 !output/images/.gitkeep
 .vscode/*
+__pycache__/
+*.pyc

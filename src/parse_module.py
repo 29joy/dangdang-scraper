@@ -1,92 +1,108 @@
-# 解析功能封装
-# ===== 标准库模块 =====
-import time
+"""
+parse_module.py
+================
+
+This module encapsulates the product parsing functionality.
+- Extracts book information (title, price, author, cover image) from search result pages.
+- Handles image downloading through the image_process module.
+- Supports multi-pages crawling and error logging.
+- Stores all parsed data in a structured list.
+
+本模块封装了商品解析功能。
+- 从搜索结果页面提取图书信息（标题、价格、作者、封面图）。
+- 通过 image_process 模块处理封面图下载。
+- 支持多页翻页抓取并记录解析错误。
+- 将所有解析数据存储在结构化列表中。
+"""
+
+# ===== Standard Library Modules =====
 import traceback
-from datetime import datetime
 
-# ===== 第三方库 =====
+# ===== Third-Party Library Modules =====
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
-# ===== 项目自定义模块 =====
-# from mymodule import myfunction
+# ===== Custom Project Modules =====
+from product_selectors import SELECTORS
 import image_process as img_pro
+from logger import *
 
 
-def get_product_info(book):
-    # ===== 获取标题 =====
-    title = book.find_element(By.XPATH, './/a[@name="itemlist-title"]').text.strip()
+def parse_product(driver, context, config, selectors=None):
+    """
+    Parses product information from search result pages.
 
-    # ===== 获取价格 =====
-    price = book.find_element(By.CLASS_NAME, "search_now_price").text.strip()
+    Parameters:
+        driver: Selenium WebDriver instance for browser interaction.
+        context: Context object containing paths, logs, and temporary storage.
+        config: Configuration dictionary (total pages, wait time, etc.).
+        selectors: Optional dictionary of selectors; defaults to SELECTORS.
 
-    # ===== 获取作者 =====
-    author = book.find_element(
-        By.XPATH, './/p[@class="search_book_author"]/span[1]'
-    ).text.strip()
+    Returns:
+        List of lists, where each sublist contains product data dictionaries for one page.
+        Each dictionary includes:
+            - "Title"
+            - "Price"
+            - "Author"
+            - "Cover_Img_Filename"
+            - "Cover_Img_Path"
+    """
+    if selectors is None:
+        selectors = SELECTORS
 
-    # ===== 进入封面图片下载流程 =====
-    img_el = book.find_element(By.TAG_NAME, "img")
-    # img download阶段1: 从HTML中获取图片URL
-    img_url = img_el.get_attribute("data-original") or img_el.get_attribute("src")
+    # Create a container for storing all page data
+    all_pages_data = []
+    total_pages = config.get("total_pages")
+    wait_time = config.get("wait_time")
 
-    return title, price, author, img_url
-
-
-def parse_product(driver, context):
-    # 创建数据存储容器
-    all_pages_data = []  # 每一页是一个列表
-    total_pages = 3
-    img_validation_fail_list = []
-
-    # 循环实现翻页功能
+    # Loop through pages
     for page in range(1, total_pages + 1):
         page_data = []
-        print(f"正在抓取第 {page} 页...")
+        logger.info(f"Scraping page {page}...")
 
-        time.sleep(3)  # 等待页面加载
-        # ===== 定位图书 =====
-        books = driver.find_elements(By.XPATH, '//ul[@class="bigimg"]/li')
+        # Wait until all product containers are loaded
+        WebDriverWait(driver, wait_time).until(
+            EC.presence_of_all_elements_located((By.XPATH, selectors["product_container"]))
+        )
+        items = driver.find_elements(By.XPATH, selectors["product_container"])
 
-        for idx, book in enumerate(books, start=1):
+        for idx, item in enumerate(items, start=1):
             try:
-                # ===== 获取标题、价格、作者、封面图URL =====
-                title, price, author, img_url = get_product_info(book)
-                # ===== 封面图下载 =====
-                img_status, img_path = img_pro.process_image(
-                    img_url,
-                    title,
-                    price,
-                    author,
-                    page,
-                    idx,
-                    img_validation_fail_list,
-                    context,
-                )
-                page_data.append(
-                    {
-                        "标题": title,
-                        "价格": price,
-                        "作者": author,
-                        "封面图文件名": img_status,
-                        "封面图路径": img_path,
-                    }
-                )
+                # ===== Extract title, price, author, cover image URL =====
+                title = item.find_element(By.XPATH, selectors["title"]).text.strip()
+                price = item.find_element(By.CLASS_NAME, selectors["price"]).text.strip()
+                author = item.find_element(By.XPATH, selectors["author"]).text.strip()
+                img_el = item.find_element(By.TAG_NAME, selectors["image"])
+                img_url = img_el.get_attribute('data-original') or img_el.get_attribute('src')
+
+                # ===== Download cover image =====
+                img_status, img_path = img_pro.process_image(img_url, title, price, author, page, idx, context)
+
+                page_data.append({
+                    "Title": title,
+                    "Price": price,
+                    "Author": author,
+                    "Cover_Img_Filename": img_status,
+                    "Cover_Img_Path": img_path
+                })
+
             except Exception:
                 error_msg = traceback.format_exc()
-                print(f"[Error] 第{page}页第{idx}本书解析失败: {error_msg}")
-                with open(context.parsing_error_log_path, "a", encoding="utf-8") as log:
-                    log.write(f"{datetime.now()} - 第{page}页第{idx}本: {error_msg}\n")
+                logger.error(f"Failed to parse book {idx} on page {page}: {error_msg}")
+                log_to_text(f"{datetime.now()} - Page {page} Book {idx}: {error_msg}\n", context.parsing_error_log_path)
                 continue
 
-        # 当前页数据加入总数据
+        # Add current page data to overall data
         all_pages_data.append(page_data)
 
-        # 翻页
+        # Navigate to next page
         if page < total_pages:
             try:
-                next_button = driver.find_element(By.LINK_TEXT, "下一页")
-                driver.execute_script("arguments[0].click();", next_button)
-            except:
-                print("找不到‘下一页’，提前结束")
+                next_button = driver.find_element(By.XPATH, selectors["next_page"])
+                next_button.click()
+            except Exception:
+                logger.error("Next page button not found, ending pagination early.")
                 break
-    return all_pages_data, img_validation_fail_list
+
+    return all_pages_data

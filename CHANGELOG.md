@@ -65,3 +65,51 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 - 对整体代码流程进行梳理，为后续封装做铺垫。
   Refactored and clarified the overall code workflow to prepare for upcoming code encapsulation.
+
+## [v2.0.0] - 2025-08-20
+
+### Added / 新增
+
+- **config.py**  
+  Centralized configuration file, providing a clear entry point for parameter management.  
+  配置文件集中管理参数，入口更清晰。
+
+- **logger.py**  
+  Introduced logging functionality for better debugging and monitoring.  
+  新增日志模块，支持更清晰的调试与运行监控。
+
+- **product_selectors.py**  
+  Encapsulated product-related selectors for improved maintainability.  
+  新增选择器模块，集中管理网页元素定位，更易维护与扩展。
+
+- **LICENSE & CONFIG.md**  
+  Added open-source license and configuration documentation.  
+  新增开源许可证与配置文档，提升项目规范性。
+
+### Changed / 变更
+
+- **Refactored project structure**  
+  Migrated from a single-file script to a modularized architecture for better scalability.  
+  项目由单文件脚本重构为模块化结构，更具可扩展性。
+
+- **main.py → run_pipeline**  
+  Upgraded script-style execution to a reusable function with parameter support, enabling unit testing and integration.  
+  将脚本式流程升级为可复用的 `run_pipeline`，支持传参，便于单元测试和后续集成。
+
+- **context.py improvements**  
+  Replaced string paths with `pathlib.Path` for type safety and readability; added list data into `context` for centralized state management.  
+  使用 `pathlib.Path` 替代字符串路径，更直观安全；部分列表加入 `context` 统一管理。
+
+- **WebDriverWait**  
+  Substituted `time.sleep()` with `WebDriverWait`, improving stability and efficiency.  
+  用 `WebDriverWait` 替代 `time.sleep()`，提高了稳定性与效率。
+
+### Fixed / 修复
+
+- **Logging support**  
+  Enhanced runtime visibility by fixing missing log outputs.  
+  修复了缺失日志输出的问题，提升运行可观测性。
+
+- **Image validation & download**  
+  Improved error handling and robustness of image downloading logic.  
+  优化了图片验证与下载逻辑，增强了容错与稳定性。
